@@ -15,6 +15,9 @@ using OldMaidModel;
 
 namespace OldMaidWpf.View.Simulator
 {
+    /// <summary>
+    /// ゲーム過程リストアイテム
+    /// </summary>
     public class GameHistoryItem : INotifyPropertyChanged
     {
         #region Implements INotifyPropertyChanged
@@ -28,14 +31,27 @@ namespace OldMaidWpf.View.Simulator
             if (propertyChanged != null) propertyChanged(this, new PropertyChangedEventArgs(propertyName));
             CommandManager.InvalidateRequerySuggested();
         }
-
         #endregion
 
+        /// <summary>
+        /// 人
+        /// </summary>
         public IParson Parson { get; set; }
+
+        /// <summary>
+        /// 結果
+        /// </summary>
         public string Action { get; set; }
+
+        /// <summary>
+        /// ゲームマスター判定
+        /// </summary>
         public bool IsMaster { get { return Parson is GameMaster; } }
     }
 
+    /// <summary>
+    /// シミュレータViewModel
+    /// </summary>
     public class SimulatorViewModel : INotifyPropertyChanged
     {
         #region Implements INotifyPropertyChanged
@@ -51,6 +67,17 @@ namespace OldMaidWpf.View.Simulator
                 propertyChanged(this, new PropertyChangedEventArgs(propertyName));
                 RaiseCommandCanExecute();
             }
+        }
+
+        /// <summary>
+        /// コマンド実行可否判定呼出
+        /// </summary>
+        private void RaiseCommandCanExecute()
+        {
+            StartGameCommand.RaiseCanExecuteChanged();
+            StopGameCommand.RaiseCanExecuteChanged();
+            AddPlayerCommand.RaiseCanExecuteChanged();
+            DelPlayerCommand.RaiseCanExecuteChanged();
         }
 
         #endregion
@@ -101,6 +128,9 @@ namespace OldMaidWpf.View.Simulator
 
         private ObservableCollection<string> _playerList;
 
+        /// <summary>
+        /// プレイヤーリスト
+        /// </summary>
         public ObservableCollection<string> PlayerList
         {
             get { return _playerList ?? (_playerList = new ObservableCollection<string>()); }
@@ -108,6 +138,9 @@ namespace OldMaidWpf.View.Simulator
 
         private CollectionViewSource _playerCollectionSource;
 
+        /// <summary>
+        /// プレイヤーリストCollectioViewSource
+        /// </summary>
         public CollectionViewSource PlayerCollectionSource
         {
             get
@@ -122,6 +155,9 @@ namespace OldMaidWpf.View.Simulator
             }
         }
 
+        /// <summary>
+        /// プレイヤーリストCollectionView
+        /// </summary>
         public ICollectionView PlayerCollectionView { get { return PlayerCollectionSource.View; } }
 
         #endregion
@@ -130,6 +166,9 @@ namespace OldMaidWpf.View.Simulator
 
         private ObservableCollection<GameHistoryItem> _gameHistory;
 
+        /// <summary>
+        /// ゲーム履歴リスト
+        /// </summary>
         public ObservableCollection<GameHistoryItem> GameHistory
         {
             get { return _gameHistory ?? (_gameHistory = new ObservableCollection<GameHistoryItem>()); }
@@ -137,6 +176,9 @@ namespace OldMaidWpf.View.Simulator
 
         private CollectionViewSource _gemeHistoryCollectionSource;
 
+        /// <summary>
+        /// ゲーム履歴CollectionViewSource
+        /// </summary>
         public CollectionViewSource GameHistoryCollectionSource
         { 
             get
@@ -151,26 +193,20 @@ namespace OldMaidWpf.View.Simulator
             }
         }
 
+        /// <summary>
+        /// ゲーム履歴CollectionView
+        /// </summary>
         public ICollectionView GameHistoryCollectionView { get { return GameHistoryCollectionSource.View; } }
 
         #endregion
 
         #region シミュレータ
 
-        //private OldMaidGameSim _sim;
-
-        //public OldMaidGameSim Sim {
-        //    get { return _sim; } 
-        //    set
-        //    {
-        //        if (_sim == value) return;
-        //        _sim = value;
-        //        OnPropertyChanged();
-        //    }
-        //}
-
         private GameSimulator _sim;
 
+        /// <summary>
+        /// シミュレータ
+        /// </summary>
         public GameSimulator Sim
         {
             get { return _sim; }
@@ -188,6 +224,9 @@ namespace OldMaidWpf.View.Simulator
 
         private bool _isGamePlaying;
 
+        /// <summary>
+        /// ゲーム中フラグ
+        /// </summary>
         public bool IsGamePlaying
         {
             get { return _isGamePlaying; }
@@ -207,6 +246,9 @@ namespace OldMaidWpf.View.Simulator
 
         private RelayCommand _addPlayerCommand;
 
+        /// <summary>
+        /// プレイヤー追加コマンド
+        /// </summary>
         public RelayCommand AddPlayerCommand
         {
             get
@@ -221,6 +263,9 @@ namespace OldMaidWpf.View.Simulator
 
         private RelayCommand _delPlayerCommand;
 
+        /// <summary>
+        /// 選択プレイヤー削除コマンド
+        /// </summary>
         public RelayCommand DelPlayerCommand
         {
             get
@@ -236,6 +281,9 @@ namespace OldMaidWpf.View.Simulator
 
         private RelayCommand _startGameCommand;
 
+        /// <summary>
+        /// ゲーム開始コマンド
+        /// </summary>
         public RelayCommand StartGameCommand
         {
             get
@@ -251,6 +299,9 @@ namespace OldMaidWpf.View.Simulator
 
         private RelayCommand _stopGameCommand;
 
+        /// <summary>
+        /// ゲーム中止コマンド
+        /// </summary>
         public RelayCommand StopGameCommand
         {
             get
@@ -271,7 +322,7 @@ namespace OldMaidWpf.View.Simulator
         #region プレイヤー追加
 
         /// <summary>
-        /// プレイヤー追加コマンド
+        /// プレイヤー追加
         /// </summary>
         private void AddPlayer()
         {
@@ -295,6 +346,9 @@ namespace OldMaidWpf.View.Simulator
 
         #region プレイヤー削除
 
+        /// <summary>
+        /// 選択プレイヤー削除
+        /// </summary>
         private void DelPlayer()
         {
             if (!CanDelPlayer()) return;
@@ -302,6 +356,10 @@ namespace OldMaidWpf.View.Simulator
             PlayerList.Remove(PlayerCollectionView.CurrentItem as string);
         }
 
+        /// <summary>
+        /// 選択プレイヤー削除実行可否判定
+        /// </summary>
+        /// <returns>true=実行可/false=実行不可</returns>
         private bool CanDelPlayer()
         {
             return PlayerCollectionView.CurrentItem != null && !IsGamePlaying;
@@ -311,6 +369,9 @@ namespace OldMaidWpf.View.Simulator
 
         #region ゲーム開始
 
+        /// <summary>
+        /// ゲーム開始
+        /// </summary>
         private void StartGame()
         {
             if (!CanStartGame()) return;
@@ -345,6 +406,11 @@ namespace OldMaidWpf.View.Simulator
             RaiseCommandCanExecute();
         }
 
+        /// <summary>
+        /// IParson行動通知イベントハンドラ
+        /// </summary>
+        /// <param name="parson">通知元</param>
+        /// <param name="action">行動</param>
         private void OutputParsonAction(IParson parson, string action)
         {
             if (Application.Current == null || Application.Current.Dispatcher == null) return;
@@ -355,6 +421,10 @@ namespace OldMaidWpf.View.Simulator
             }, System.Windows.Threading.DispatcherPriority.Background);
         }
 
+        /// <summary>
+        /// ゲーム開始実行可否判定
+        /// </summary>
+        /// <returns>true=実行可/false=実行不可</returns>
         private bool CanStartGame()
         {
             return !string.IsNullOrEmpty(MasterName) && PlayerList.Count >= 2 && !IsGamePlaying;
@@ -362,6 +432,11 @@ namespace OldMaidWpf.View.Simulator
 
         #endregion
 
+        #region ゲーム中止
+
+        /// <summary>
+        /// ゲーム中止
+        /// </summary>
         private void StopGame()
         {
             if (!CanStopGame()) return;
@@ -371,6 +446,10 @@ namespace OldMaidWpf.View.Simulator
             Sim.IsRunning = false;
         }
 
+        /// <summary>
+        /// ゲーム中止実行可否判定
+        /// </summary>
+        /// <returns>true=実行可/false=実行不可</returns>
         private bool CanStopGame()
         {
             return IsGamePlaying;
@@ -378,12 +457,6 @@ namespace OldMaidWpf.View.Simulator
 
         #endregion
 
-        private void RaiseCommandCanExecute()
-        {
-            StartGameCommand.RaiseCanExecuteChanged();
-            StopGameCommand.RaiseCanExecuteChanged();
-            AddPlayerCommand.RaiseCanExecuteChanged();
-            DelPlayerCommand.RaiseCanExecuteChanged();
-        }
+        #endregion
     }
 }
